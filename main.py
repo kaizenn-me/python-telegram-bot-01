@@ -3,7 +3,6 @@ import requests
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
-
 # Logging for debugging
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
@@ -47,30 +46,38 @@ async def generate_waifu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         waifu_url = response.json().get('url')
         last_generated_url[query.from_user.id] = waifu_url  # Save the last generated URL
 
-        # Display the waifu image with "Download Image" and "Back to Main Menu" options
+        # Determine the appropriate sending method based on the file extension
+        file_extension = waifu_url.split('.')[-1].lower()
+
         keyboard = [
             [InlineKeyboardButton("Download Image", url=waifu_url)],
             [InlineKeyboardButton("Back to Main Menu", callback_data='main_menu')]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
-        await query.message.reply_photo(waifu_url, caption=f"Here is a {category} for you! 🌸", reply_markup=reply_markup)
-    else:
-      
-      await query.message.reply_text(
-         "🌸✨ *Oopsie\\!* ✨🌸\n\n"
-         "If you choose *NSFW* content, you can only enjoy these categories:\n"
-         "💖 *Waifu* 🐾, *Neko* 🐱, *Trap* 🎀, and *Blowjob* 💋\n\n"
-         "But if you choose *SFW*, you have so many sweet options:\n"
-         "🌸 *Waifu* 🐾, *Neko* 🐱, *Bully* 😈, *Cuddle* 🤗, *Cry* 😢, *Hug* 🤗,\n"
-         "💕 *Kiss* 😘, *Lick* 👅, *Pat* 👋, *Smug* 😏, *Bonk* 🔨, *Yeet* 💨,\n"
-         "😊 *Blush* 😊, *Smile* 😄, *Wave* 👋, *Highfive* ✋, *Handhold* 🤝,\n"
-         "🍬 *Nom* 🍬, *Bite* 😋, *Glomp* 🤗, *Slap* ✋, *Kill* 💀, *Kick* 🦵,\n"
-         "🎉 *Happy* 😀, *Wink* 😉, *Poke* 👉, *Dance* 💃, *Cringe* 😖\n\n"
-          "Choose wisely\\! 🌈💖",
-    parse_mode="MarkdownV2"
-)
 
-        
+        # Send as animation if GIF, as video if MP4, and as photo otherwise
+        if file_extension == 'gif':
+            await query.message.reply_animation(waifu_url, caption=f"Here is a {category} for you! 🌸", reply_markup=reply_markup)
+        elif file_extension == 'mp4':
+            await query.message.reply_video(waifu_url, caption=f"Here is a {category} for you! 🌸", reply_markup=reply_markup)
+        else:
+            await query.message.reply_photo(waifu_url, caption=f"Here is a {category} for you! 🌸", reply_markup=reply_markup)
+    else:
+        await query.message.reply_text(
+            "🌸✨ *Oopsie\\!* ✨🌸\n\n"
+            "If you choose *NSFW* content, you can only enjoy these categories:\n"
+            "💖 *Waifu* 🐾, *Neko* 🐱, *Trap* 🎀, and *Blowjob* 💋\n\n"
+            "But if you choose *SFW*, you have so many sweet options:\n"
+            "🌸 *Waifu* 🐾, *Neko* 🐱, *Bully* 😈, *Cuddle* 🤗, *Cry* 😢, *Hug* 🤗,\n"
+            "💕 *Kiss* 😘, *Lick* 👅, *Pat* 👋, *Smug* 😏, *Bonk* 🔨, *Yeet* 💨,\n"
+            "😊 *Blush* 😊, *Smile* 😄, *Wave* 👋, *Highfive* ✋, *Handhold* 🤝,\n"
+            "🍬 *Nom* 🍬, *Bite* 😋, *Glomp* 🤗, *Slap* ✋, *Kill* 💀, *Kick* 🦵,\n"
+            "🎉 *Happy* 😀, *Wink* 😉, *Poke* 👉, *Dance* 💃, *Cringe* 😖\n\n"
+            "Choose wisely\\! 🌈💖",
+            parse_mode="MarkdownV2"
+        )
+
+
 # Function for Waifu Settings (NSFW or SFW)
 async def waifu_settings(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     keyboard = [
