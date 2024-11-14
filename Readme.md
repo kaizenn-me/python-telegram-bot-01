@@ -112,9 +112,12 @@ For full legal details, check the [AGPL-3.0 License](https://www.gnu.org/license
 
 ---
 
+
 ## Support 🌸
 Need a helping hand? Feel free to open an issue or reach out! Let’s keep the cuteness going~ 🥳💕
 
 ---
+## Try me, nya~ 🌸✨ :3
 
-🌸
+<img src="https://i.ibb.co/s5FpXZv/Sy5Fq.png" alt="You Can Try Our Bot For Free :3" width="300"/>
+
